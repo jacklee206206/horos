@@ -32,7 +32,7 @@ jobs:
           git lfs install
           git lfs pull
 
-      - name: Patch legacy OpenJPEG checks for modern macOS
+      - name: Patch legacy OpenJPEG for modern macOS arm64
         shell: bash
         run: |
           set -euxo pipefail
@@ -47,6 +47,11 @@ jobs:
               Path("OpenJPEG/thirdparty/libz/zutil.h"): (
                   "#if defined(MACOS) || defined(TARGET_OS_MAC)",
                   "#if defined(MACOS)",
+              ),
+              Path("OpenJPEG/thirdparty/libpng/CMakeLists.txt"): (
+                  "add_library(${LIBTARGET} STATIC ${SRCS} ${HDRS} ${EXT_HDRS})",
+                  "add_library(${LIBTARGET} STATIC ${SRCS} ${HDRS} ${EXT_HDRS})\n"
+                  "target_compile_definitions(${LIBTARGET} PRIVATE PNG_ARM_NEON_OPT=0)",
               ),
           }
 
