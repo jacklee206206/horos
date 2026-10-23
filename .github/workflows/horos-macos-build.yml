@@ -96,6 +96,12 @@ jobs:
                   "[ -f \"$install_dir/lib/libopenjp2.a\" ] || "
                   "rsync \"$cmake_dir/bin/libopenjp2.a\" \"$install_dir/lib/\"",
               ),
+              Path("DCMTK/ofstd/include/dcmtk/ofstd/ofutil.h"): (
+                  "inline type(const OFrvalue_storage& rhs)\n"
+                  "        : t( rhs.pt ) {}",
+                  "inline type(const type& rhs)\n"
+                  "        : t( rhs.t ) {}",
+              ),
           }
 
           for path, (old, new) in patches.items():
