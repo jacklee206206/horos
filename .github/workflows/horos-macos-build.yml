@@ -32,7 +32,7 @@ jobs:
           git lfs install
           git lfs pull
 
-      - name: Patch legacy OpenJPEG for modern macOS arm64
+      - name: Patch legacy dependencies for modern macOS arm64
         shell: bash
         run: |
           set -euxo pipefail
@@ -52,6 +52,13 @@ jobs:
                   "add_library(${LIBTARGET} STATIC ${SRCS} ${HDRS} ${EXT_HDRS})",
                   "add_library(${LIBTARGET} STATIC ${SRCS} ${HDRS} ${EXT_HDRS})\n"
                   "target_compile_definitions(${LIBTARGET} PRIVATE PNG_ARM_NEON_OPT=0)",
+              ),
+              Path("Horos/Scripts/GDCM/CMake.sh"): (
+                  "openjpeg_include=\"$openjpeg_install/include/openjpeg-2.5\"\n"
+                  "if [ ! -d \"$openjpeg_include\" ]; then\n"
+                  "    openjpeg_include=\"$openjpeg_install/include/openjpeg-2.3\"\n"
+                  "fi",
+                  "openjpeg_include=\"$openjpeg_install/include/OpenJPEG\"",
               ),
           }
 
