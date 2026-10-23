@@ -57,8 +57,13 @@ jobs:
                   "openjpeg_include=\"$openjpeg_install/include/openjpeg-2.5\"\n"
                   "if [ ! -d \"$openjpeg_include\" ]; then\n"
                   "    openjpeg_include=\"$openjpeg_install/include/openjpeg-2.3\"\n"
-                  "fi",
-                  "openjpeg_include=\"$openjpeg_install/include/OpenJPEG\"",
+                  "fi\n"
+                  "args+=(-DOPENJPEG_LIBRARIES=\"$openjpeg_install/lib/libopenjp2.a\")\n"
+                  "args+=(-DOPENJPEG_INCLUDE_DIRS=\"$openjpeg_include\")",
+                  "openjpeg_include=\"$openjpeg_install/include/OpenJPEG\"\n"
+                  "args+=(-DOPENJPEG_LIBRARIES=\"$openjpeg_install/lib/libopenjp2.a\")\n"
+                  "args+=(-DOPENJPEG_INCLUDE_DIRS=\"$openjpeg_include\")\n"
+                  "args+=(-DOPENJPEG_VERSION=\"2.5.0\")",
               ),
           }
 
