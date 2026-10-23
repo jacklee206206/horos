@@ -13,6 +13,8 @@ jobs:
   build-horos:
     runs-on: macos-26
     timeout-minutes: 120
+    env:
+      CMAKE_POLICY_VERSION_MINIMUM: "3.5"
 
     steps:
       - name: Check out Horos and submodules
