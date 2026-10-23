@@ -32,6 +32,31 @@ jobs:
           git lfs install
           git lfs pull
 
+      - name: Patch legacy OpenJPEG checks for modern macOS
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          patches = {
+              Path("OpenJPEG/thirdparty/libpng/pngpriv.h"): (
+                  "defined(THINK_C) || defined(__SC__) || defined(TARGET_OS_MAC)",
+                  "defined(THINK_C) || defined(__SC__)",
+              ),
+              Path("OpenJPEG/thirdparty/libz/zutil.h"): (
+                  "#if defined(MACOS) || defined(TARGET_OS_MAC)",
+                  "#if defined(MACOS)",
+              ),
+          }
+
+          for path, (old, new) in patches.items():
+              text = path.read_text()
+              if old not in text:
+                  raise SystemExit(f"Expected compatibility check not found in {path}")
+              path.write_text(text.replace(old, new, 1))
+          PY
+
       - name: Record build environment
         shell: bash
         run: |
