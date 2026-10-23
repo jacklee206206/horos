@@ -1,6 +1,9 @@
 name: Build Horos for macOS
 
 on:
+  push:
+    branches:
+      - horos
   workflow_dispatch:
 
 permissions:
@@ -8,7 +11,7 @@ permissions:
 
 jobs:
   build-horos:
-    runs-on: macos-14
+    runs-on: macos-26
     timeout-minutes: 120
 
     steps:
