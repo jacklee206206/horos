@@ -110,6 +110,10 @@ jobs:
                   "defined(THINK_C) || defined(__SC__) || defined(TARGET_OS_MAC)",
                   "defined(THINK_C) || defined(__SC__)",
               ),
+              Path("VTK/ThirdParty/eigen/vtkeigen/eigen/src/Core/Transpositions.h"): (
+                  "Product<OtherDerived, Transpose, AliasFreeProduct>(matrix.derived(), trt.derived())",
+                  "Product<OtherDerived, Transpose, AliasFreeProduct>(matrix.derived(), trt)",
+              ),
           }
 
           for path, (old, new) in patches.items():
