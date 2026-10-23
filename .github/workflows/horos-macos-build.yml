@@ -28,12 +28,24 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          brew install cmake pkg-config git-lfs libtiff || true
-          tiff_prefix="$(brew --prefix libtiff)"
-          echo "LDFLAGS=-L${tiff_prefix}/lib ${LDFLAGS:-}" >> "$GITHUB_ENV"
-          echo "CPPFLAGS=-I${tiff_prefix}/include ${CPPFLAGS:-}" >> "$GITHUB_ENV"
-          echo "LIBRARY_PATH=${tiff_prefix}/lib${LIBRARY_PATH:+:${LIBRARY_PATH}}" >> "$GITHUB_ENV"
-          echo "PKG_CONFIG_PATH=${tiff_prefix}/lib/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}" >> "$GITHUB_ENV"
+          formulas=(libtiff webp jpeg-turbo xz zstd little-cms2 libpng)
+          brew install cmake pkg-config git-lfs "${formulas[@]}" || true
+
+          library_path=""
+          pkg_config_path=""
+          ldflags=""
+          cppflags=""
+          for formula in "${formulas[@]}"; do
+            prefix="$(brew --prefix "$formula")"
+            library_path="${library_path:+${library_path}:}${prefix}/lib"
+            pkg_config_path="${pkg_config_path:+${pkg_config_path}:}${prefix}/lib/pkgconfig"
+            ldflags="${ldflags} -L${prefix}/lib"
+            cppflags="${cppflags} -I${prefix}/include"
+          done
+          echo "LDFLAGS=${ldflags} ${LDFLAGS:-}" >> "$GITHUB_ENV"
+          echo "CPPFLAGS=${cppflags} ${CPPFLAGS:-}" >> "$GITHUB_ENV"
+          echo "LIBRARY_PATH=${library_path}${LIBRARY_PATH:+:${LIBRARY_PATH}}" >> "$GITHUB_ENV"
+          echo "PKG_CONFIG_PATH=${pkg_config_path}${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}" >> "$GITHUB_ENV"
           git lfs install
           git lfs pull
 
