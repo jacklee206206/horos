@@ -49,6 +49,15 @@ jobs:
           git lfs install
           git lfs pull
 
+      - name: Extract bundled previous database models
+        shell: bash
+        run: |
+          set -euxo pipefail
+          ditto -x -k Binaries/DB_Previous_Models.zip Binaries
+          test -f Binaries/DB_Previous_Models/OsiriXDB_Previous_DataModel2.2.mom
+          test -f Binaries/DB_Previous_Models/OsiriXDB_Previous_DataModel2.3.mom
+          test -f Binaries/DB_Previous_Models/OsiriXDB_Previous_DataModel2.4.mom
+
       - name: Patch legacy dependencies for modern macOS arm64
         shell: bash
         run: |
