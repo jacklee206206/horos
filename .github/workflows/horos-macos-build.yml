@@ -53,6 +53,15 @@ jobs:
                   "add_library(${LIBTARGET} STATIC ${SRCS} ${HDRS} ${EXT_HDRS})\n"
                   "target_compile_definitions(${LIBTARGET} PRIVATE PNG_ARM_NEON_OPT=0)",
               ),
+              Path("VTK/ThirdParty/png/vtkpng/pngpriv.h"): (
+                  "defined(THINK_C) || defined(__SC__) || defined(TARGET_OS_MAC)",
+                  "defined(THINK_C) || defined(__SC__)",
+              ),
+              Path("VTK/ThirdParty/png/vtkpng/CMakeLists.txt"): (
+                  "vtk_add_library(vtkpng ${sources} ${headers})",
+                  "vtk_add_library(vtkpng ${sources} ${headers})\n"
+                  "target_compile_definitions(vtkpng PRIVATE PNG_ARM_NEON_OPT=0)",
+              ),
               Path("Horos/Scripts/GDCM/CMake.sh"): (
                   "openjpeg_include=\"$openjpeg_install/include/openjpeg-2.5\"\n"
                   "if [ ! -d \"$openjpeg_include\" ]; then\n"
