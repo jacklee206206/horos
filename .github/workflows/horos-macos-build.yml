@@ -1,0 +1,79 @@
+name: Build Horos for macOS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-horos:
+    runs-on: macos-14
+    timeout-minutes: 120
+
+    steps:
+      - name: Check out Horos and submodules
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: recursive
+          lfs: true
+
+      - name: Install build dependencies
+        shell: bash
+        run: |
+          set -euxo pipefail
+          brew install cmake pkg-config git-lfs || true
+          git lfs install
+          git lfs pull
+
+      - name: Record build environment
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sw_vers | tee build-environment.txt
+          xcodebuild -version | tee -a build-environment.txt
+          xcodebuild -project Horos.xcodeproj -list | tee -a build-environment.txt
+
+      - name: Build unsigned Horos application
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project Horos.xcodeproj \
+            -scheme Horos \
+            -configuration Release \
+            -derivedDataPath "$RUNNER_TEMP/HorosDerivedData" \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            DEVELOPMENT_TEAM="" \
+            build 2>&1 | tee xcodebuild.log
+
+      - name: Package unsigned application
+        shell: bash
+        run: |
+          set -euxo pipefail
+          APP_PATH="$(find "$RUNNER_TEMP/HorosDerivedData/Build/Products" -type d -name 'Horos.app' -print -quit)"
+          test -n "$APP_PATH"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" Horos-unsigned-arm64.zip
+
+      - name: Upload Horos application
+        uses: actions/upload-artifact@v4
+        with:
+          name: Horos-unsigned-arm64
+          path: Horos-unsigned-arm64.zip
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Horos-build-diagnostics
+          path: |
+            build-environment.txt
+            xcodebuild.log
+          if-no-files-found: warn
+          retention-days: 7
