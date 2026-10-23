@@ -102,6 +102,10 @@ jobs:
                   "inline type(const type& rhs)\n"
                   "        : t( rhs.t ) {}",
               ),
+              Path("ITK/Modules/ThirdParty/ZLIB/src/itkzlib/zutil.h"): (
+                  "#if defined(MACOS) || defined(TARGET_OS_MAC)",
+                  "#if defined(MACOS)",
+              ),
           }
 
           for path, (old, new) in patches.items():
