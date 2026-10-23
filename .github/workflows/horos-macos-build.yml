@@ -106,6 +106,10 @@ jobs:
                   "#if defined(MACOS) || defined(TARGET_OS_MAC)",
                   "#if defined(MACOS)",
               ),
+              Path("ITK/Modules/ThirdParty/PNG/src/itkpng/pngpriv.h"): (
+                  "defined(THINK_C) || defined(__SC__) || defined(TARGET_OS_MAC)",
+                  "defined(THINK_C) || defined(__SC__)",
+              ),
           }
 
           for path, (old, new) in patches.items():
