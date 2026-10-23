@@ -91,6 +91,11 @@ jobs:
                   "args+=(-DOPENJPEG_INCLUDE_DIRS=\"$openjpeg_include\")\n"
                   "args+=(-DOPENJPEG_VERSION=\"2.5.0\")",
               ),
+              Path("Horos/Scripts/Grok/Make.sh"): (
+                  "rsync \"$cmake_dir/src/lib/openjp2/libopenjp2.a\" \"$install_dir/lib/\" # somehow the lib isn't copied by make-install",
+                  "[ -f \"$install_dir/lib/libopenjp2.a\" ] || "
+                  "rsync \"$cmake_dir/bin/libopenjp2.a\" \"$install_dir/lib/\"",
+              ),
           }
 
           for path, (old, new) in patches.items():
